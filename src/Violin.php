@@ -401,7 +401,7 @@ class Violin implements ValidatorContract
             return [];
         }
 
-        list($ruleName, $argsWithBracketAtTheEnd) = explode('(', $rule);
+        list($ruleName, $argsWithBracketAtTheEnd) = explode('(', $rule, 2);
 
         $args = rtrim($argsWithBracketAtTheEnd, ')');
         $args = preg_replace('/\s+/', '', $args);
