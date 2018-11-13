@@ -404,7 +404,9 @@ class Violin implements ValidatorContract
         list($ruleName, $argsWithBracketAtTheEnd) = explode('(', $rule, 2);
 
         $args = rtrim($argsWithBracketAtTheEnd, ')');
-        $args = preg_replace('/\s+/', '', $args);
+        if($ruleName != 'regex'){
+            $args = preg_replace('/\s+/', '', $args);
+        }
         $args = explode(',', $args);
 
         return $args;
