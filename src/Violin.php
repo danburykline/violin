@@ -255,13 +255,18 @@ class Violin implements ValidatorContract
             $message = str_replace($argReplace, $args, $message);
         }
 
+        /*
+         *  Catch the possibility of the value being an array and
+         *  perform a safe array->string conversion if so.
+         */
+        $value = $item['value'];
+        $safe_value = is_array($value)?implode(', ', $value):$value;
         // Replace field and value
         $message = str_replace(
             ['{field}', '{value}'],
-            [$item['field'], $item['value']],
+            [$item['field'], $safe_value],
             $message
         );
-
         return $message;
     }
 
@@ -283,7 +288,7 @@ class Violin implements ValidatorContract
         if ($this->canSkipRule($ruleToCall, $value)) {
             return;
         }
-        
+
         $passed = call_user_func_array($ruleToCall, [
             $value,
             $this->input,
