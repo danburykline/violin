@@ -269,4 +269,44 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
         $this->assertEmpty($this->v->errors()->all());
     }
+
+    public function testArrayValidation(){
+        $this->v->validate([
+            'items' => [ [1,2,3,4], 'required']
+        ]);
+
+        $this->assertTrue($this->v->passes());
+        $this->assertEmpty($this->v->errors()->all());
+
+        $this->v->addFieldMessages([
+            'items' => [
+                'required' => 'We need some items in the {field} field, please.'
+            ]
+        ]);
+
+        $this->v->validate([
+            'items|Items' => [ [], 'required']
+        ]);
+
+        $errors = $this->v->errors();
+        $this->assertFalse($this->v->passes());
+        $this->assertTrue($this->v->fails());
+        $this->assertEquals(
+            $errors->first('items'),
+            'We need some items in the Items field, please.'
+        );
+
+        $this->v->validate([
+            'items|Items' => [ [2,3,4], 'required|matches(other_items)'],
+            'other_items' => [ [1,2,3], 'required']
+        ]);
+
+        $errors = $this->v->errors();
+        $this->assertFalse($this->v->passes());
+        $this->assertTrue($this->v->fails());
+        $this->assertEquals(
+            $errors->first('items'),
+            'Items must match other_items.'
+        );
+    }
 }
